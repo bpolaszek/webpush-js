@@ -1,0 +1,5 @@
+/.idea
+/dist/entrypoints.json
+/dist/manifest.json
+/node_modules
+yarn.lock

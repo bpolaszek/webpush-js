@@ -1,0 +1,15 @@
+{
+  "name": "webpush-client",
+  "version": "0.5",
+  "description": "My New Project description.",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/bpolaszek/webpush-js.git",
+    "type": "git"
+  },
+  "author": "Beno!t POLASZEK <bpolaszek@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.21.0"
+  }
+}
