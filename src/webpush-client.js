@@ -193,7 +193,7 @@ class WebPushClient {
      */
     getPermissionState() {
         this.ensureSupported();
-        return this.permissionStatus.state;
+        return this.permissionStatus;
     }
 
     /**

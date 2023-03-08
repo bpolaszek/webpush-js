@@ -1,6 +1,6 @@
 {
   "name": "webpush-client",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "My New Project description.",
   "main": "index.js",
   "repository": {
