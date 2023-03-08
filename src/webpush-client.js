@@ -18,10 +18,10 @@ function required(param = '') {
 const WebPushUtils = {
 
     /**
-     * @returns {boolean}
+     * @returns Promise<string>
      */
     checkPermission() {
-        return navigator.permissions.query({name: 'notifications'});
+        return Notification.requestPermission();
     },
 
     /**
@@ -151,9 +151,6 @@ class WebPushClient {
         if ('undefined' !== typeof subscribeUrl) {
             this.storage = new RemoteStorage(subscribeUrl);
         }
-        PermissionStatus.onchange = (PermissionStatus) => {
-            this.permissionStatus = PermissionStatus;
-        };
     }
 
     /**

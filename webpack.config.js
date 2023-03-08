@@ -1,5 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 
+Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'production');
+
 Encore
     .setOutputPath('dist')
     .setPublicPath('/')
