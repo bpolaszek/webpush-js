@@ -220,9 +220,6 @@ export class WebPushClient {
 
   /**
    * Unsubscribe to notifications.
-   *
-   * @param unregister
-   * @returns {Promise<T | never>}
    */
   unsubscribe(unregister = this.isUrlProvided(), headers = {}) {
     this.ensureSupported();
@@ -245,8 +242,6 @@ export class WebPushClient {
 
   /**
    * Update options on remote server.
-   *
-   * @param options
    */
   updateOptions(options = {}, headers = {}) {
     this.ensureSupported();
@@ -254,11 +249,7 @@ export class WebPushClient {
     if (!this.storage || !this.subscription) {
       return;
     }
-    return this.storage.updateOptions(
-      this.subscription,
-      options,
-      (headers = {})
-    );
+    return this.storage.updateOptions(this.subscription, options, headers);
   }
 
   /**
