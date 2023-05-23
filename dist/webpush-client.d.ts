@@ -37,15 +37,10 @@ export declare class WebPushClient {
     subscribe(options?: {}, register?: boolean, headers?: {}): Promise<unknown>;
     /**
      * Unsubscribe to notifications.
-     *
-     * @param unregister
-     * @returns {Promise<T | never>}
      */
     unsubscribe(unregister?: boolean, headers?: {}): Promise<void>;
     /**
      * Update options on remote server.
-     *
-     * @param options
      */
     updateOptions(options?: {}, headers?: {}): Promise<PushSubscription> | undefined;
     /**

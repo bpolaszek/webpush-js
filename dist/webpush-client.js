@@ -217,9 +217,6 @@ var WebPushClient = /** @class */ (function () {
     };
     /**
      * Unsubscribe to notifications.
-     *
-     * @param unregister
-     * @returns {Promise<T | never>}
      */
     WebPushClient.prototype.unsubscribe = function (unregister, headers) {
         var _this = this;
@@ -242,8 +239,6 @@ var WebPushClient = /** @class */ (function () {
     };
     /**
      * Update options on remote server.
-     *
-     * @param options
      */
     WebPushClient.prototype.updateOptions = function (options, headers) {
         if (options === void 0) { options = {}; }
@@ -253,7 +248,7 @@ var WebPushClient = /** @class */ (function () {
         if (!this.storage || !this.subscription) {
             return;
         }
-        return this.storage.updateOptions(this.subscription, options, (headers = {}));
+        return this.storage.updateOptions(this.subscription, options, headers);
     };
     /**
      * Ping remote server
