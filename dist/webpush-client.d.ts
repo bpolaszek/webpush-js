@@ -38,7 +38,7 @@ export declare class WebPushClient {
     /**
      * Unsubscribe to notifications.
      */
-    unsubscribe(unregister?: boolean, headers?: {}): Promise<void>;
+    unsubscribe(unregister?: boolean, headers?: {}): Promise<unknown>;
     /**
      * Update options on remote server.
      */

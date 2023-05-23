@@ -11,21 +11,13 @@ function encodeServerKey(serverKey: string) {
   return outputArray;
 }
 
-function required(param = "") {
-  throw new Error("Missing parameter " + param);
-}
-
 const WebPushUtils = {
   checkPermission() {
     return Notification.requestPermission();
   },
 
   registerServiceWorker(serviceWorkerPath: string) {
-    return navigator.serviceWorker
-      .register(serviceWorkerPath)
-      .then(function (registration) {
-        return registration;
-      });
+    return navigator.serviceWorker.register(serviceWorkerPath);
   },
 
   getSubscription(serviceWorkerRegistration: ServiceWorkerRegistration) {
@@ -38,8 +30,12 @@ class RemoteStorage {
     this.url = url;
   }
 
-  register(PushSubscription: PushSubscription, options = {}, headers = {}) {
-    return fetch(this.url, {
+  async register(
+    pushSubscription: PushSubscription,
+    options = {},
+    headers = {}
+  ) {
+    await fetch(this.url, {
       method: "POST",
       mode: "cors",
       credentials: "include",
@@ -50,20 +46,19 @@ class RemoteStorage {
         ...headers,
       }),
       body: JSON.stringify({
-        subscription: PushSubscription,
-        options: options,
+        subscription: pushSubscription,
+        options,
       }),
-    }).then(() => {
-      return PushSubscription;
     });
+    return pushSubscription;
   }
 
-  updateOptions(
-    PushSubscription: PushSubscription,
+  async updateOptions(
+    pushSubscription: PushSubscription,
     options = {},
     headers = {}
   ) {
-    return fetch(this.url, {
+    await fetch(this.url, {
       method: "PUT",
       mode: "cors",
       credentials: "include",
@@ -74,16 +69,15 @@ class RemoteStorage {
         ...headers,
       }),
       body: JSON.stringify({
-        subscription: PushSubscription,
+        subscription: pushSubscription,
         options,
       }),
-    }).then(() => {
-      return PushSubscription;
     });
+    return pushSubscription;
   }
 
-  unregister(ubscription: PushSubscription, headers = {}) {
-    return fetch(this.url, {
+  async unregister(subscription: PushSubscription, headers = {}) {
+    await fetch(this.url, {
       method: "DELETE",
       mode: "cors",
       credentials: "include",
@@ -94,15 +88,14 @@ class RemoteStorage {
         ...headers,
       }),
       body: JSON.stringify({
-        subscription: ubscription,
+        subscription,
       }),
-    }).then(() => {
-      return true;
     });
+    return true;
   }
 
-  ping(PushSubscription: PushSubscription, options = {}) {
-    return fetch(this.url, {
+  async ping(pushSubscription: PushSubscription, options = {}) {
+    await fetch(this.url, {
       method: "PING",
       mode: "cors",
       credentials: "include",
@@ -112,12 +105,11 @@ class RemoteStorage {
         "Content-Type": "application/json",
       }),
       body: JSON.stringify({
-        subscription: PushSubscription,
+        subscription: pushSubscription,
         options: options,
       }),
-    }).then(() => {
-      return true;
     });
+    return true;
   }
 }
 
@@ -203,41 +195,34 @@ export class WebPushClient {
   /**
    * Subscribe to notifications.
    */
-  subscribe(options = {}, register = this.isUrlProvided(), headers = {}) {
+  async subscribe(options = {}, register = this.isUrlProvided(), headers = {}) {
     this.ensureSupported();
-    return this.registration.pushManager
-      .subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: this.applicationServerKey,
-      })
-      .then((pushSubscription: PushSubscription) => {
-        this.subscription = pushSubscription;
-        return true === register && this.ensureUrlIsProvided() && this.storage
-          ? this.storage.register(pushSubscription, options, headers)
-          : new Promise((resolve) => resolve(PushSubscription));
-      });
+    const pushSubscription = await this.registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: this.applicationServerKey,
+    });
+    this.subscription = pushSubscription;
+    return true === register && this.ensureUrlIsProvided() && this.storage
+      ? this.storage.register(pushSubscription, options, headers)
+      : new Promise((resolve) => resolve(PushSubscription));
   }
 
   /**
    * Unsubscribe to notifications.
    */
-  unsubscribe(unregister = this.isUrlProvided(), headers = {}) {
+  async unsubscribe(unregister = this.isUrlProvided(), headers = {}) {
     this.ensureSupported();
-    return WebPushUtils.getSubscription(this.registration).then(
-      (PushSubscription) => {
-        if (!PushSubscription) {
-          return;
-        }
-        return PushSubscription.unsubscribe().then(() => {
-          this.subscription = null;
-          return true === unregister &&
-            this.ensureUrlIsProvided() &&
-            this.storage
-            ? this.storage.unregister(PushSubscription, headers)
-            : new Promise((resolve) => resolve(true));
-        });
-      }
+    const pushSubscription = await WebPushUtils.getSubscription(
+      this.registration
     );
+    if (!pushSubscription) {
+      return;
+    }
+    await pushSubscription.unsubscribe();
+    this.subscription = null;
+    return true === unregister && this.ensureUrlIsProvided() && this.storage
+      ? this.storage.unregister(pushSubscription, headers)
+      : new Promise((resolve) => resolve(true));
   }
 
   /**
@@ -279,7 +264,7 @@ export const WebPushClientFactory = {
    * Create a client
    * @throws PushNotificationsNotSupported
    */
-  create({
+  async create({
     serviceWorkerPath,
     subscribeUrl,
     serverKey,
@@ -291,30 +276,24 @@ export const WebPushClientFactory = {
     if (!this.isSupported()) {
       throw new PushNotificationsNotSupported();
     }
-
-    return WebPushUtils.checkPermission().then((permissionStatus) => {
-      return (
-        WebPushUtils.registerServiceWorker(serviceWorkerPath)
-          .then((serviceWorkerRegistration) =>
-            WebPushUtils.getSubscription(serviceWorkerRegistration).then(
-              (subscription) =>
-                new WebPushClient({
-                  isSupported: true,
-                  applicationServerKey: encodeServerKey(serverKey),
-                  permissionStatus,
-                  serviceWorkerRegistration,
-                  subscription,
-                  subscribeUrl,
-                })
-            )
-          )
-
-          // In case of error
-          .catch((reason) => {
-            console.warn("Webpush client cannot be started: " + reason);
-            throw new CreateClientError(reason.message);
-          })
+    try {
+      const permissionStatus = await WebPushUtils.checkPermission();
+      const serviceWorkerRegistration =
+        await WebPushUtils.registerServiceWorker(serviceWorkerPath);
+      const subscription = await WebPushUtils.getSubscription(
+        serviceWorkerRegistration
       );
-    });
+      return new WebPushClient({
+        isSupported: true,
+        applicationServerKey: encodeServerKey(serverKey),
+        permissionStatus,
+        serviceWorkerRegistration,
+        subscription,
+        subscribeUrl,
+      });
+    } catch (e) {
+      console.warn("Webpush client cannot be started: " + e);
+      throw new CreateClientError(e instanceof Error ? e.message : "");
+    }
   },
 };
