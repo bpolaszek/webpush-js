@@ -228,7 +228,7 @@ export class WebPushClient {
         if (!PushSubscription) {
           return;
         }
-        PushSubscription.unsubscribe().then(() => {
+        return PushSubscription.unsubscribe().then(() => {
           this.subscription = null;
           return true === unregister &&
             this.ensureUrlIsProvided() &&
