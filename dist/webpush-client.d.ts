@@ -1,4 +1,4 @@
-declare class WebPushClient {
+export declare class WebPushClient {
     private supported;
     private permissionStatus;
     private registration;
@@ -53,7 +53,7 @@ declare class WebPushClient {
      */
     ping(options?: {}): Promise<boolean> | undefined;
 }
-declare const WebPushClientFactory: {
+export declare const WebPushClientFactory: {
     isSupported(): boolean;
     /**
      * Create a client
@@ -65,4 +65,3 @@ declare const WebPushClientFactory: {
         serverKey: string;
     }): Promise<WebPushClient>;
 };
-export default WebPushClientFactory;

@@ -118,7 +118,7 @@ class RemoteStorage {
 class PushNotificationsNotSupported extends Error {}
 class CreateClientError extends Error {}
 
-class WebPushClient {
+export class WebPushClient {
   private supported: boolean;
   private permissionStatus: NotificationPermission;
   private registration: ServiceWorkerRegistration;
@@ -264,7 +264,7 @@ class WebPushClient {
   }
 }
 
-const WebPushClientFactory = {
+export const WebPushClientFactory = {
   isSupported() {
     return (
       "PushManager" in window &&
@@ -317,5 +317,3 @@ const WebPushClientFactory = {
     });
   },
 };
-
-export default WebPushClientFactory;

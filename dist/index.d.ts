@@ -1,1 +1,1 @@
-export { default } from "./webpush-client";
+export * from "./webpush-client";

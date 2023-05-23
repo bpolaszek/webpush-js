@@ -26,6 +26,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WebPushClientFactory = exports.WebPushClient = void 0;
 function encodeServerKey(serverKey) {
     var padding = "=".repeat((4 - (serverKey.length % 4)) % 4);
     var base64 = (serverKey + padding).replace(/\-/g, "+").replace(/_/g, "/");
@@ -270,7 +271,8 @@ var WebPushClient = /** @class */ (function () {
     };
     return WebPushClient;
 }());
-var WebPushClientFactory = {
+exports.WebPushClient = WebPushClient;
+exports.WebPushClientFactory = {
     isSupported: function () {
         return ("PushManager" in window &&
             "fetch" in window &&
@@ -308,4 +310,3 @@ var WebPushClientFactory = {
         });
     },
 };
-exports.default = WebPushClientFactory;
