@@ -41,13 +41,13 @@ export declare class WebPushClient {
      * @param unregister
      * @returns {Promise<T | never>}
      */
-    unsubscribe(unregister?: boolean): Promise<void>;
+    unsubscribe(unregister?: boolean, headers?: {}): Promise<void>;
     /**
      * Update options on remote server.
      *
      * @param options
      */
-    updateOptions(options?: {}): Promise<PushSubscription> | undefined;
+    updateOptions(options?: {}, headers?: {}): Promise<PushSubscription> | undefined;
     /**
      * Ping remote server
      */

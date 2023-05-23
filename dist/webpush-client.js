@@ -78,17 +78,15 @@ var RemoteStorage = /** @class */ (function () {
             return PushSubscription;
         });
     };
-    RemoteStorage.prototype.updateOptions = function (PushSubscription, options) {
+    RemoteStorage.prototype.updateOptions = function (PushSubscription, options, headers) {
         if (options === void 0) { options = {}; }
+        if (headers === void 0) { headers = {}; }
         return fetch(this.url, {
             method: "PUT",
             mode: "cors",
             credentials: "include",
             cache: "default",
-            headers: new Headers({
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            }),
+            headers: new Headers(__assign({ Accept: "application/json", "Content-Type": "application/json" }, headers)),
             body: JSON.stringify({
                 subscription: PushSubscription,
                 options: options,
@@ -97,16 +95,14 @@ var RemoteStorage = /** @class */ (function () {
             return PushSubscription;
         });
     };
-    RemoteStorage.prototype.unregister = function (ubscription) {
+    RemoteStorage.prototype.unregister = function (ubscription, headers) {
+        if (headers === void 0) { headers = {}; }
         return fetch(this.url, {
             method: "DELETE",
             mode: "cors",
             credentials: "include",
             cache: "default",
-            headers: new Headers({
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            }),
+            headers: new Headers(__assign({ Accept: "application/json", "Content-Type": "application/json" }, headers)),
             body: JSON.stringify({
                 subscription: ubscription,
             }),
@@ -225,9 +221,10 @@ var WebPushClient = /** @class */ (function () {
      * @param unregister
      * @returns {Promise<T | never>}
      */
-    WebPushClient.prototype.unsubscribe = function (unregister) {
+    WebPushClient.prototype.unsubscribe = function (unregister, headers) {
         var _this = this;
         if (unregister === void 0) { unregister = this.isUrlProvided(); }
+        if (headers === void 0) { headers = {}; }
         this.ensureSupported();
         return WebPushUtils.getSubscription(this.registration).then(function (PushSubscription) {
             if (!PushSubscription) {
@@ -238,7 +235,7 @@ var WebPushClient = /** @class */ (function () {
                 return true === unregister &&
                     _this.ensureUrlIsProvided() &&
                     _this.storage
-                    ? _this.storage.unregister(PushSubscription)
+                    ? _this.storage.unregister(PushSubscription, headers)
                     : new Promise(function (resolve) { return resolve(true); });
             });
         });
@@ -248,14 +245,15 @@ var WebPushClient = /** @class */ (function () {
      *
      * @param options
      */
-    WebPushClient.prototype.updateOptions = function (options) {
+    WebPushClient.prototype.updateOptions = function (options, headers) {
         if (options === void 0) { options = {}; }
+        if (headers === void 0) { headers = {}; }
         this.ensureSupported();
         this.ensureUrlIsProvided();
         if (!this.storage || !this.subscription) {
             return;
         }
-        return this.storage.updateOptions(this.subscription, options);
+        return this.storage.updateOptions(this.subscription, options, (headers = {}));
     };
     /**
      * Ping remote server

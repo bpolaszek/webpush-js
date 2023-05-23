@@ -58,7 +58,11 @@ class RemoteStorage {
     });
   }
 
-  updateOptions(PushSubscription: PushSubscription, options = {}) {
+  updateOptions(
+    PushSubscription: PushSubscription,
+    options = {},
+    headers = {}
+  ) {
     return fetch(this.url, {
       method: "PUT",
       mode: "cors",
@@ -67,6 +71,7 @@ class RemoteStorage {
       headers: new Headers({
         Accept: "application/json",
         "Content-Type": "application/json",
+        ...headers,
       }),
       body: JSON.stringify({
         subscription: PushSubscription,
@@ -77,7 +82,7 @@ class RemoteStorage {
     });
   }
 
-  unregister(ubscription: PushSubscription) {
+  unregister(ubscription: PushSubscription, headers = {}) {
     return fetch(this.url, {
       method: "DELETE",
       mode: "cors",
@@ -86,6 +91,7 @@ class RemoteStorage {
       headers: new Headers({
         Accept: "application/json",
         "Content-Type": "application/json",
+        ...headers,
       }),
       body: JSON.stringify({
         subscription: ubscription,
@@ -218,7 +224,7 @@ export class WebPushClient {
    * @param unregister
    * @returns {Promise<T | never>}
    */
-  unsubscribe(unregister = this.isUrlProvided()) {
+  unsubscribe(unregister = this.isUrlProvided(), headers = {}) {
     this.ensureSupported();
     return WebPushUtils.getSubscription(this.registration).then(
       (PushSubscription) => {
@@ -230,7 +236,7 @@ export class WebPushClient {
           return true === unregister &&
             this.ensureUrlIsProvided() &&
             this.storage
-            ? this.storage.unregister(PushSubscription)
+            ? this.storage.unregister(PushSubscription, headers)
             : new Promise((resolve) => resolve(true));
         });
       }
@@ -242,13 +248,17 @@ export class WebPushClient {
    *
    * @param options
    */
-  updateOptions(options = {}) {
+  updateOptions(options = {}, headers = {}) {
     this.ensureSupported();
     this.ensureUrlIsProvided();
     if (!this.storage || !this.subscription) {
       return;
     }
-    return this.storage.updateOptions(this.subscription, options);
+    return this.storage.updateOptions(
+      this.subscription,
+      options,
+      (headers = {})
+    );
   }
 
   /**
