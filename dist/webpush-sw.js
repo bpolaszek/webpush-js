@@ -1,6 +1,12 @@
 self.addEventListener("push", (event) => {
   try {
     const Notification = event.data.json();
+    if (
+      Notification.options.data &&
+      typeof Notification.options.data === "string"
+    ) {
+      Notification.options.data = JSON.parse(Notification.options.data);
+    }
     event.waitUntil(
       self.registration.showNotification(
         Notification.title || "",
