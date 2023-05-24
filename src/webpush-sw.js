@@ -29,7 +29,8 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const url = event.notification.data.link || "";
+  // Since data.link doesn't work with iOS, use tag to send the URL.
+  const url = event.notification.tag || event.notification.data.link || "";
 
   if (url.length > 0) {
     event.waitUntil(
