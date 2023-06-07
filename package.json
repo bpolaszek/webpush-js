@@ -1,6 +1,6 @@
 {
   "name": "webpush-client",
-  "version": "0.5.8",
+  "version": "0.5.0",
   "description": "Web push client",
   "main": "dist/index.min.js",
   "types": "dist/index.d.ts",
