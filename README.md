@@ -30,6 +30,7 @@ The library ships with both a client and a service worker.
             serviceWorkerPath: '/js/webpush-sw.js', // Public path to the service worker
             serverKey: 'my_server_key', // https://developers.google.com/web/fundamentals/push-notifications/web-push-protocol#application_server_keys
             subscribeUrl: '/webpush', // Optionnal - your application URL to store webpush subscriptions
+            headers // Optional : An object or Headers object that will be passed to fetch
         })
             .then(Client => {
                 WebPushClient = Client;
@@ -48,6 +49,7 @@ Webpush.create({
     serviceWorkerPath: '/js/webpush-sw.js', // Public path to the service worker
     serverKey: 'my_server_key', // https://developers.google.com/web/fundamentals/push-notifications/web-push-protocol#application_server_keys
     subscribeUrl: '/webpush', // Optionnal - your application URL to store webpush subscriptions
+    headers // Optional : An object or Headers object that will be passed to fetch
 })
     .then(WebPushClient => {
         // do stuff with WebPushClient
@@ -99,3 +101,6 @@ It's now up to you to handle these infos properly on the server side. Have a loo
 
 If your application runs on Symfony, you can have a look at [bentools/webpush-bundle](https://github.com/bpolaszek/webpush-bundle) for which this JS was originally designed for. 
 
+## Development
+
+Build dist files using `npx encore production --progress`

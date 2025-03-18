@@ -49,8 +49,9 @@ const WebPushUtils = {
 
 class RemoteStorage {
 
-    constructor(url = required()) {
+    constructor(url = required(), headers = {}) {
         this.url = url;
+        this.headers = headers;
     }
 
     register(PushSubscription = required(), options = {}) {
@@ -61,7 +62,8 @@ class RemoteStorage {
             cache: 'default',
             headers: new Headers({
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...this.headers
             }),
             body: JSON.stringify({
                 subscription: PushSubscription,
@@ -80,7 +82,8 @@ class RemoteStorage {
             cache: 'default',
             headers: new Headers({
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...this.headers
             }),
             body: JSON.stringify({
                 subscription: PushSubscription,
@@ -99,7 +102,8 @@ class RemoteStorage {
             cache: 'default',
             headers: new Headers({
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...this.headers
             }),
             body: JSON.stringify({
                 subscription: PushSubscription,
@@ -117,7 +121,8 @@ class RemoteStorage {
             cache: 'default',
             headers: new Headers({
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...this.headers
             }),
             body: JSON.stringify({
                 subscription: PushSubscription,
@@ -137,7 +142,8 @@ class WebPushClient {
                     ServiceWorkerRegistration,
                     Subscription,
                     applicationServerKey,
-                    subscribeUrl
+                    subscribeUrl,
+                    headers
                 }) {
         this.supported = isSupported;
         if (false === isSupported) {
@@ -149,7 +155,7 @@ class WebPushClient {
         this.subscription = Subscription;
 
         if ('undefined' !== typeof subscribeUrl) {
-            this.storage = new RemoteStorage(subscribeUrl);
+            this.storage = new RemoteStorage(subscribeUrl, headers);
         }
     }
 
@@ -285,6 +291,7 @@ window.WebPushClientFactory = {
                serviceWorkerPath,
                subscribeUrl,
                serverKey,
+               headers,
            }) {
 
         if (!this.isSupported()) {
@@ -312,7 +319,8 @@ window.WebPushClientFactory = {
                                     PermissionStatus,
                                     ServiceWorkerRegistration,
                                     Subscription,
-                                    subscribeUrl
+                                    subscribeUrl,
+                                    headers
                                 });
 
                             });
