@@ -1,10 +1,10 @@
 {
   "name": "webpush-client",
-  "version": "0.4.2",
-  "description": "My New Project description.",
+  "version": "0.5.0",
+  "description": "Push Notification manager",
   "main": "index.js",
   "repository": {
-    "url": "https://github.com/bpolaszek/webpush-js.git",
+    "url": "git+https://github.com/bpolaszek/webpush-js.git",
     "type": "git"
   },
   "author": "Beno!t POLASZEK <bpolaszek@gmail.com>",
